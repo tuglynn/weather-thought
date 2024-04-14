@@ -1,0 +1,43 @@
+:root {
+    --link: #fff5de;
+    --hero: #7c87d2;
+}
+body {
+    background-color: #f2f1f1;
+}
+.App-header {
+    background-color: var(--hero);
+}
+li {
+    list-style-type: none;
+    margin: .5rem;
+}
+.weather li {
+    padding-left:.5em;
+}
+.navBar li {
+    padding-right: 2em;
+}
+.navBar li a, .navBar li p {
+    color: var(--link);
+    transition: ease-in 500ms;
+}
+.navBar li p {
+    margin-bottom: 0;
+}
+.navBar li a:hover, .navBar li p:hover {
+    cursor: pointer;
+    color: #9affe2;
+    text-decoration: none;
+}
+.App button.linkLike{
+    background: inherit;
+    border: none;
+    color: #037bfe; 
+    font-size: inherit;
+}
+.App button.linkLike:hover{
+    color: #0056B3; 
+    text-decoration: underline;
+    cursor: pointer;
+}
