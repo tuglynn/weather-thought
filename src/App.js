@@ -19,32 +19,41 @@ import Login from './components/util/Login';
 import "./App.css";
 
 const App = props => {
+    //Declaring global variables
     const [posts, setPosts] = useState([]);
     const [message, setMessage] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+    //Setting a flash message for user
     const setFlashMessage = message => {
+        //doesn't work. figure out why it does not run.
         setMessage(message);
         setTimeout(() => {
             setMessage(null);
         }, 1600);
     }
-
+    //login
     const onLogin = async (email, password) => {
         try {
+            //get user credentials and sign in
             const userCredentials = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredentials.user;
+            //if user exists login
+            //login with bad credentials gives 400 (bad request)
             if(user) {
                 setFlashMessage('signed in');
+                //set global authentication to true
                 setIsAuthenticated(true);
                 //set navigation back to home page
             } else {
+                //else do not set to true
                 console.log('no user')
                 setFlashMessage('invalid email or password');
                 setIsAuthenticated(false);
             }
 
         } catch (error) {
+            //errors for logging in
             if (error.code === 'auth/invalid-login-credentials') {
                 // Handle this specific error case, maybe show a user-friendly message
                 setFlashMessage('Invalid email or password');
@@ -62,44 +71,49 @@ const App = props => {
     //     setIsAuthenticated(true);
     // }).catch(error => console.error(error));
 
+    //logout function
     const onLogout = () => {
         signOut(auth).then(() =>{
             setFlashMessage('signed out');
+            //reset global
             setIsAuthenticated(false);
             console.log('signed out!');
+            
         })
     }
-
+//generate post slug
 const getNewSlugFromTitle = title => {
     return encodeURIComponent(title.toLowerCase().split(' ').join('-'));
 }
-    const addNewPost = post => {
-        const postRef = ref(database, 'posts');
-        const newPostRef = push(postRef);
+//create new post
+const addNewPost = post => {
+    const postRef = ref(database, 'posts');
+    const newPostRef = push(postRef);
 
-        set(newPostRef, {
-            title: post.title,
-            content: post.content,
-           slug: getNewSlugFromTitle(post.title)
-        });
-        setFlashMessage('saved');
-    }
-    const updatePost = (post) => {
-        const postRef = ref(database, 'posts/' + post.key);
-        update(postRef, {
-            slug: getNewSlugFromTitle(post.title),
-            title: post.title,
-            content: post.content
-        });
+    set(newPostRef, {
+        title: post.title,
+        content: post.content,
+        slug: getNewSlugFromTitle(post.title)
+    });
+    setFlashMessage('saved');
+ }
+   
+ const updatePost = (post) => {
+    const postRef = ref(database, 'posts/' + post.key);
+    update(postRef, {
+        slug: getNewSlugFromTitle(post.title),
+       title: post.title,
+        content: post.content
+    });
         
-        setFlashMessage('updated');
-        post.slug = getNewSlugFromTitle(post.title);
-        const index = posts.findIndex((p) => p.id === post.id);
-        const oldPosts = posts.slice(0, index).concat(posts.slice(index + 1));
-        const updatedPosts = [...oldPosts, post].sort((a, b) => a.id - b.id);
-        setPosts(updatedPosts);
-        setFlashMessage(`updated`); 
-    };
+    setFlashMessage('updated');
+    post.slug = getNewSlugFromTitle(post.title);
+    const index = posts.findIndex((p) => p.id === post.id);
+    const oldPosts = posts.slice(0, index).concat(posts.slice(index + 1));
+    const updatedPosts = [...oldPosts, post].sort((a, b) => a.id - b.id);
+   setPosts(updatedPosts);
+   setFlashMessage(`updated`); 
+};
     const deletePost = post => {
         if (window.confirm('Delete this post?')) {
             const postRef = ref(database, 'posts/' + post.key);
