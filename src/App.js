@@ -36,10 +36,13 @@ const App = props => {
     const onLogin = async (email, password) => {
         try {
             //get user credentials and sign in
+            //if this doesn't return, then we get a 400 error
             const userCredentials = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredentials.user;
             //if user exists login
             //login with bad credentials gives 400 (bad request)
+            //none of the else or catch is running.
+            console.log(userCredentials);
             if(user) {
                 setFlashMessage('signed in');
                 //set global authentication to true
@@ -87,6 +90,7 @@ const getNewSlugFromTitle = title => {
 }
 //create new post
 const addNewPost = post => {
+    //
     const postRef = ref(database, 'posts');
     const newPostRef = push(postRef);
 
@@ -96,10 +100,13 @@ const addNewPost = post => {
         slug: getNewSlugFromTitle(post.title)
     });
     setFlashMessage('saved');
+    //when new post is added, we get a 404 page
  }
-   
+//update post
  const updatePost = (post) => {
+    //find the post you are updating
     const postRef = ref(database, 'posts/' + post.key);
+    //update the content
     update(postRef, {
         slug: getNewSlugFromTitle(post.title),
        title: post.title,
@@ -107,22 +114,30 @@ const addNewPost = post => {
     });
         
     setFlashMessage('updated');
+    //get new post slug
     post.slug = getNewSlugFromTitle(post.title);
+    //find the index of the post
     const index = posts.findIndex((p) => p.id === post.id);
+    //remove the old version
     const oldPosts = posts.slice(0, index).concat(posts.slice(index + 1));
+    //update the posts array
     const updatedPosts = [...oldPosts, post].sort((a, b) => a.id - b.id);
-   setPosts(updatedPosts);
-   setFlashMessage(`updated`); 
+    setPosts(updatedPosts);
+    setFlashMessage(`updated`); 
+   //when a post has been updated we get a 404 page
 };
+    //delete post
     const deletePost = post => {
         if (window.confirm('Delete this post?')) {
             const postRef = ref(database, 'posts/' + post.key);
             remove(postRef);
             setFlashMessage(`deleted`);
+            //need to update blog to remove post from view
         }
     }
     useEffect(() => {
         const postRef = ref(database);
+        console.log("useeffect ran");
         get(child(postRef, 'posts')).then(snapshot => {
             if (snapshot.exists()) {
                 const posts = snapshot.val();
