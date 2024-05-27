@@ -135,13 +135,17 @@ const addNewPost = post => {
             //need to update blog to remove post from view
         }
     }
-    useEffect(() => {
-        const postRef = ref(database);
-        console.log("useeffect ran");
+    //get posts
+    const getPosts = postRef => {
+        //query to database
         get(child(postRef, 'posts')).then(snapshot => {
+            //make sure there are posts
             if (snapshot.exists()) {
+                //create object of objects
                 const posts = snapshot.val();
+                //initialize array to loop over
                 const newStatePosts= [];
+                //push data into newState array
                 for (let post in posts) {
                     newStatePosts.push({
                         key: post,
@@ -155,6 +159,27 @@ const addNewPost = post => {
                 console.log('no data');
             }
         });
+    }
+    useEffect(() => {
+        const postRef = ref(database);
+        getPosts(postRef);
+        // get(child(postRef, 'posts')).then(snapshot => {
+        //     if (snapshot.exists()) {
+        //         const posts = snapshot.val();
+        //         const newStatePosts= [];
+        //         for (let post in posts) {
+        //             newStatePosts.push({
+        //                 key: post,
+        //                 slug: posts[post].slug,
+        //                 title: posts[post].title,
+        //                 content: posts[post].content
+        //             });
+        //         }
+        //         setPosts(newStatePosts);
+        //     } else {
+        //         console.log('no data');
+        //     }
+        // });
     }, [database, ref])
     return (
         <Router>
