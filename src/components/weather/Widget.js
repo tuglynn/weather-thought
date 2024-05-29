@@ -3,7 +3,7 @@ import Weather from './Weather';
 import City from './City';
 
 
-const Widget = ({database, set, databaseRef, get, child}) => {
+const Widget = ({database, set, databaseRef, get}) => {
         const [city, setCity] = useState(false);
         const [cityName, setCityName] = useState('')
         const [lat, setLat] = useState('');

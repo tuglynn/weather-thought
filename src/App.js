@@ -26,7 +26,6 @@ const App = props => {
 
     //Setting a flash message for user
     const setFlashMessage = message => {
-        //doesn't work. figure out why it does not run.
         setMessage(message);
         setTimeout(() => {
             setMessage(null);
@@ -88,6 +87,31 @@ const App = props => {
 const getNewSlugFromTitle = title => {
     return encodeURIComponent(title.toLowerCase().split(' ').join('-'));
 }
+ //get posts
+ const getPosts = postRef => {
+    //query to database
+    get(child(postRef, 'posts')).then(snapshot => {
+        //make sure there are posts
+        if (snapshot.exists()) {
+            //create object of objects
+            const posts = snapshot.val();
+            //initialize array to loop over
+            const newStatePosts= [];
+            //push data into newState array
+            for (let post in posts) {
+                newStatePosts.push({
+                    key: post,
+                    slug: posts[post].slug,
+                    title: posts[post].title,
+                    content: posts[post].content
+                });
+            }
+            setPosts(newStatePosts);
+        } else {
+            console.log('no data');
+        }
+    });
+}
 //create new post
 const addNewPost = post => {
     //
@@ -101,6 +125,7 @@ const addNewPost = post => {
     });
     setFlashMessage('saved');
     //when new post is added, we get a 404 page
+    getPosts(ref(database));
  }
 //update post
  const updatePost = (post) => {
@@ -128,79 +153,52 @@ const addNewPost = post => {
 };
     //delete post
     const deletePost = post => {
+        //confirm box for delete
         if (window.confirm('Delete this post?')) {
+            //find post with key
             const postRef = ref(database, 'posts/' + post.key);
+            //remove from database
             remove(postRef);
+            //refresh blog posts
+            getPosts(ref(database));
+            //notify user they deleted a post
             setFlashMessage(`deleted`);
-            //need to update blog to remove post from view
+
         }
     }
-    //get posts
-    const getPosts = postRef => {
-        //query to database
-        get(child(postRef, 'posts')).then(snapshot => {
-            //make sure there are posts
-            if (snapshot.exists()) {
-                //create object of objects
-                const posts = snapshot.val();
-                //initialize array to loop over
-                const newStatePosts= [];
-                //push data into newState array
-                for (let post in posts) {
-                    newStatePosts.push({
-                        key: post,
-                        slug: posts[post].slug,
-                        title: posts[post].title,
-                        content: posts[post].content
-                    });
-                }
-                setPosts(newStatePosts);
-            } else {
-                console.log('no data');
-            }
-        });
-    }
+    //to run on load
     useEffect(() => {
-        const postRef = ref(database);
-        getPosts(postRef);
-        // get(child(postRef, 'posts')).then(snapshot => {
-        //     if (snapshot.exists()) {
-        //         const posts = snapshot.val();
-        //         const newStatePosts= [];
-        //         for (let post in posts) {
-        //             newStatePosts.push({
-        //                 key: post,
-        //                 slug: posts[post].slug,
-        //                 title: posts[post].title,
-        //                 content: posts[post].content
-        //             });
-        //         }
-        //         setPosts(newStatePosts);
-        //     } else {
-        //         console.log('no data');
-        //     }
-        // });
-    }, [database, ref])
+        //get posts from database
+        getPosts(ref(database));
+    }, [])
     return (
         <Router>
             <div className='App'>
                 <Header 
+                //passing the global isAuthenticated
                 isAuthenticated={isAuthenticated}
                 onLogout={onLogout} />
+                <Widget database={database} set={set}  databaseRef={ref} get={get}/>
                 {message && <Message type={message} />}
-                <Widget database={database} set={set}  databaseRef={ref} get={get} child={child}/>
+                {/* routes in app */}
                 <Routes>
+                    {/* home */}
                     <Route exact path='/weather-thought' element={<Posts
                         isAuthenticated={isAuthenticated}
                         posts={posts}
                         deletePost={deletePost} 
                         />}
                      />
+                     {/* single post */}
                     <Route path='/post/:postSlug' element={<Post posts={posts} />}/>
+                    {/* add post */}
                     <Route path='/new' element={<PostForm addNewPost={addNewPost} post={{id: null, slug: '', title: '', content: ''}} />} />
+                    {/* edit post */}
                     <Route path='/edit/:postSlug' element={<EditPostForm posts={posts} updatePost={updatePost} />} />
+                    {/* login */}
+                                        <Route exact path='/login' element={<Login onLogin={(email, password) => onLogin(email, password)} />} />
+                    {/* 404 page */}
                     <Route path='*' element={<NotFound />} />
-                    <Route exact path='/login' element={<Login onLogin={(email, password) => onLogin(email, password)} />} />
                 </Routes>
             </div>
         </Router>
