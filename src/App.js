@@ -56,12 +56,12 @@ const App = props => {
 
         } catch (error) {
             //errors for logging in
-            if (error.code === 'auth/invalid-login-credentials') {
+            if (error.code === 400) {
                 // Handle this specific error case, maybe show a user-friendly message
                 setFlashMessage('Invalid email or password');
             } else {
                 console.error('login failed', error.message);
-                setFlashMessage('login failed');
+                setFlashMessage('loginFailed');
                 setIsAuthenticated(false);
             }
         }
@@ -195,7 +195,7 @@ const addNewPost = post => {
                     {/* edit post */}
                     <Route path='/edit/:postSlug' element={<EditPostForm posts={posts} updatePost={updatePost} />} />
                     {/* login */}
-                                        <Route exact path='/login' element={<Login onLogin={(email, password) => onLogin(email, password)} />} />
+                                        <Route exact path='/login' element={<Login onLogin={(email, password) => onLogin(email, password)} setFlashMessage={setFlashMessage} setIsAuthenticated={setIsAuthenticated} setMessage={setMessage}/>} />
                     {/* 404 page */}
                     <Route path='*' element={<NotFound />} />
                 </Routes>

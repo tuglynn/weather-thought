@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+//404 page
 const NotFound = () => {
     return(
         <div className='container'>
