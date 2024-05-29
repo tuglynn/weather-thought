@@ -1,5 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+//convert quill text to html
 import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
 import NotFound from '../util/NotFound';
 
@@ -15,6 +16,7 @@ const Post = ({ posts }) => {
         <article className='container'>
             <h1>{post.title}</h1>
             <div className='container'
+            // add html content from quill
                 dangerouslySetInnerHTML={{__html: contentHTML}} />
         </article>
        )

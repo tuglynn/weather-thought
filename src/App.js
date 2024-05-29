@@ -149,7 +149,6 @@ const addNewPost = post => {
     const updatedPosts = [...oldPosts, post].sort((a, b) => a.id - b.id);
     setPosts(updatedPosts);
     setFlashMessage(`updated`); 
-   //when a post has been updated we get a 404 page
 };
     //delete post
     const deletePost = post => {
@@ -170,7 +169,7 @@ const addNewPost = post => {
     useEffect(() => {
         //get posts from database
         getPosts(ref(database));
-    }, [])
+    }, []);
     return (
         <Router>
             <div className='App'>
