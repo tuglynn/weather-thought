@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/weather-thought/static/css/main.0793b7b7.css",
-    "main.js": "/weather-thought/static/js/main.b2872672.js",
+    "main.js": "/weather-thought/static/js/main.e20b1905.js",
     "index.html": "/weather-thought/index.html",
     "main.0793b7b7.css.map": "/weather-thought/static/css/main.0793b7b7.css.map",
-    "main.b2872672.js.map": "/weather-thought/static/js/main.b2872672.js.map"
+    "main.e20b1905.js.map": "/weather-thought/static/js/main.e20b1905.js.map"
   },
   "entrypoints": [
     "static/css/main.0793b7b7.css",
-    "static/js/main.b2872672.js"
+    "static/js/main.e20b1905.js"
   ]
 }
