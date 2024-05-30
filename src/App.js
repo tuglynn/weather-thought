@@ -164,7 +164,19 @@ const addNewPost = post => {
             setFlashMessage(`deleted`);
 
         }
+    };
+    //edit posts
+    const EditPostForm = ({posts, updatePost}) => {
+        const { postSlug } = useParams();
+        const post = posts.find((post) => post.slug === postSlug);
+    
+        if(!post) {
+            return <NotFound />
+        }
+    
+        return <PostForm updatePost={updatePost} post={post} />;
     }
+
     //to run on load
     useEffect(() => {
         //get posts from database
@@ -203,16 +215,5 @@ const addNewPost = post => {
         </Router>
     );
 };
-
-const EditPostForm = ({posts, updatePost}) => {
-    const { postSlug } = useParams();
-    const post = posts.find((post) => post.slug === postSlug);
-
-    if(!post) {
-        return <NotFound />
-    }
-
-    return <PostForm updatePost={updatePost} post={post} />;
-}
 
 export default App;
